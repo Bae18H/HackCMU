@@ -39,18 +39,23 @@ function Bfield(x, y){
 	return B;
 }
 
-function Player (xi, yi){
+function Player (xi, yi, q){
 	this.x = xi;
 	this.y = yi;
 	this.vx = 0;
 	this.vy = 0;
+	this.r = cwidth/50;
+	this.img = new Image();
+	if(q > 0){
+		this.img.src = "https://raw.githubusercontent.com/Bae18H/HackCMU/master/Images/postive%20criminal%20particle.png" 
+	} else {
+
+		this.img.src = "https://raw.githubusercontent.com/Bae18H/HackCMU/master/Images/negative%20criminal%20particle.png" 
+	}
 }
 
 Player.prototype.draw = function(ctx){
-	ctx.fillStyle="#FF1111"
-	ctx.beginPath();
-	ctx.arc(this.x, this.y, cwidth/50, 0, 2*Math.PI);
-	ctx.fill();
+	ctx.drawImage(this.img, this.x - this.r, this.y - this.r, 2*this.r, 2*this.r);
 }
 
 Player.prototype.update = function(){
@@ -73,8 +78,10 @@ function Goal(x, y, moveable = false){
 	this.y = y;
 	this.moveable = moveable;
 	this.clicked = false;
-	this.width = cwidth/20;
-	this.height = cheight/10;
+	this.width = cwidth/10;
+	this.height = 0.16*cwidth;
+	this.img = new Image();
+	this.img.src = "Images/warp\ gate.png"
 }
 
 Goal.prototype.draw = function(ctx, mx, my){
@@ -87,8 +94,8 @@ Goal.prototype.draw = function(ctx, mx, my){
 		dx = this.x;
 		dy = this.y;
 	}
-	ctx.fillStyle = "#00FF00";
-	ctx.fillRect(dx, dy, this.width, this.height);
+
+	ctx.drawImage(this.img, 250, 0, 550, 900, dx, dy, this.width, this.height);
 }
 
 Goal.prototype.update = function(x, y){
@@ -117,6 +124,12 @@ function PointCharge (x, y, q, moveable=false, r=cwidth/50, clicked=false) {
 	this.r = r;
 	this.moveable = moveable;
 	this.clicked = clicked;
+	this.img = new Image()
+	if(q > 0){
+		this.img.src = "Images/+\ particle.png"
+	} else {
+		this.img.src = "Images/-\ particle.png"
+	}
 
 }
 
@@ -160,15 +173,8 @@ PointCharge.prototype.draw = function(ctx, mx, my){
 		dx = this.x;
 		dy = this.y;
 	}
-	if(this.q > 0){
-		ctx.fillStyle = "#FF0000";
-	} else {
-		ctx.fillStyle = "#0000FF";
-	}
 
-	ctx.beginPath();
-	ctx.arc(dx, dy, this.r, 0, 2*Math.PI);
-	ctx.fill()
+	ctx.drawImage(this.img, dx-this.r, dy-this.r,2*this.r, 2*this.r);
 }
 
 PointCharge.prototype.update = function(){
@@ -184,7 +190,11 @@ function HCapacitor (x, y, V, d, width, moveable=false, clicked=false) {
     this.moveable = moveable;
     this.clicked = clicked;
 	this.dwidth = cwidth/30;
-	
+	this.img1 = new Image();
+	this.img2 = new Image();
+
+	this.img1.src = "Images/positive\ Hcapacitor.png"
+	this.img2.src = "Images/negative\ Hcapacitor.png"
 }
 
 HCapacitor.prototype.click = function(mx, my){
@@ -225,22 +235,18 @@ HCapacitor.prototype.draw = function(ctx, mx, my) {
 		dx = this.x;
 		dy = this.y;
 	}
-	if(this.V > 0){
-		ctx.fillStyle = "#0000FF";
+	var px;
+	var nx;
+	if(this.V < 0){
+		px = 0;
+		nx = this.d
 	} else {
-		ctx.fillStyle = "#FF0000";
+		px = this.d;
+		nx = 0;
 	}
-	ctx.fillRect(dx, dy-this.width/2, this.dwidth, this.width);
-	if(this.V > 0){
-		ctx.fillStyle = "#FF0000";
-	} else {
-		ctx.fillStyle = "#0000FF";
-	}
-
-	ctx.fillRect(dx + this.d, dy-this.width/2, this.dwidth, this.width);
-}
-HCapacitor.prototype.update = function() {
-
+	ctx.fillStyle = "#0000FF";
+	ctx.drawImage(this.img1, 1930, 250, 200, 3008, dx + px, dy-this.width/2, this.dwidth, this.width);
+	ctx.drawImage(this.img2, 270, 270, 230, 3008, dx + nx, dy-this.width/2, this.dwidth, this.width);
 }
 
 function VCapacitor (x, y, V, d, width, moveable=false, clicked=false) {
@@ -252,6 +258,11 @@ function VCapacitor (x, y, V, d, width, moveable=false, clicked=false) {
 	this.moveable = moveable;
     this.clicked = clicked;
 	this.dwidth = cwidth/30;
+	this.img1 = new Image();
+	this.img2 = new Image();
+
+	this.img2.src = "Images/negative\ capacitor.png"
+	this.img1.src = "Images/positive\ capacitor.png"
 
 }
 
@@ -294,19 +305,18 @@ VCapacitor.prototype.draw = function(ctx, mx, my) {
 		dx = this.x;
 		dy = this.y;
 	}
-	if(this.V > 0){
-		ctx.fillStyle = "#0000FF";
+	var py;
+	var ny;
+	if(this.V < 0){
+		py = 0;
+		ny = this.d
 	} else {
-		ctx.fillStyle = "#FF0000";
+		py = this.d;
+		ny = 0;
 	}
-	ctx.fillRect(dx-this.width/2, dy, this.width, this.dwidth);
-	if(this.V > 0){
-		ctx.fillStyle = "#FF0000";
-	} else {
-		ctx.fillStyle = "#0000FF";
-	}
+	ctx.drawImage(this.img1, 220, 350, 3008, 250, dx-this.width/2, dy + py, this.width, this.dwidth);
 
-	ctx.fillRect(dx - this.width/2, dy+this.d, this.width, this.dwidth);
+	ctx.drawImage(this.img2, 250, 1950, 3058, 250, dx-this.width/2, dy+ny, this.width, this.dwidth);
 
 }
 VCapacitor.prototype.update = function() {
@@ -343,8 +353,8 @@ MagField.prototype.draw = function(ctx, mx, my) {
 	}
 
 	var grad = ctx.createRadialGradient(dx, dy, this.r/2.5, dx, dy, this.r);
-	grad.addColorStop(0, "#00FF00FF");
-	grad.addColorStop(1, "#00FF0011");
+	grad.addColorStop(0, "#FFDF00");
+	grad.addColorStop(1, "#FFDF0000");
 	ctx.fillStyle=grad;
 	ctx.beginPath();
 	ctx.arc(dx, dy, this.r, 0, 2*Math.PI);
