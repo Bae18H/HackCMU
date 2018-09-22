@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8"/>
+  <title> Escaping Charges</title>
+  <style>
+    *{ padding: 0; margin: 0; }
+    canvas { background: #ffffff; display: block; margin 0 auto; }
+  </style>
+</head>
+<body>
+<canvas id="screen" width="2480" height="3508"></canvas>
+
+<script src=
+  "https://raw.githubusercontent.com/Bae18H/HackCMU/master/HackCMU.js">
+</script>
+
+<script>
+  var canvas = document.getElementById("screen");
+  var ctx = canvas.getContext("2d");
+  ctx.canvas.width = window.innerWidth;
+  ctx.canvas.height = window.innerHeight;
+
+  function loadMain()
+  {
+    var main = new Image();
+    main.onload = function()
+    {
+      ctx.drawImage(main,0,0,main.width,   main.height,
+                        0,0,canvas.width,canvas.height);
+      window.addEventListener("keypress", (e) => {
+        if(e.key == "Enter")
+        {
+          ctx.clearRect(0,0,canvas.width, canvas.height);
+          // Change to menu screen
+        }
+      });
+    }
+    main.src = "https://raw.githubusercontent.com/Bae18H/HackCMU/master/main%20screen.png";
+  }
+
+  loadMain();
+
+</script>
+
+
+</body>
+</html>
