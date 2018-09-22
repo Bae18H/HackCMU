@@ -21,6 +21,141 @@
   ctx.canvas.width = window.innerWidth;
   ctx.canvas.height = window.innerHeight;
 
+  var playerChoice;
+  var crimeChoice;
+
+  function getMousePos(canvas, evt) {
+      var rect = canvas.getBoundingClientRect();
+      return {
+        x: evt.clientX - rect.left,
+        y: evt.clientY - rect.top
+      };
+  }
+
+  function loadCrime()
+  {
+    var crime = new Image();
+    var gps = new Image();
+    var cat = new Image();
+    var car = new Image();
+    crime.onload = function()
+    {
+      ctx.drawImage(crime, 0, 0, crime.width,  crime.height,
+                           0, 0, canvas.width, canvas.height);
+      gps.src = "https://raw.githubusercontent.com/Bae18H/HackCMU/master/Images/fuckheisenburg.png";
+      cat.src = "https://raw.githubusercontent.com/Bae18H/HackCMU/master/Images/killed%20schrodinger%20cat.png";
+      car.src = "https://raw.githubusercontent.com/Bae18H/HackCMU/master/Images/speed%20of%20light.png";
+    }
+    crime.src = "https://raw.githubusercontent.com/Bae18H/HackCMU/901c966699d13ffe8a4b3e2fece5876b0fcbe597/Images/menu%20select.png";
+
+    cat.onload = function()
+    {
+      ctx.drawImage(cat, canvas.width/1.6, 0, cat.width/2.3, cat.height/2.3);
+    }
+
+    gps.onload = function()
+    {
+      ctx.drawImage(gps, canvas.width/8, canvas.height/1.8, gps.width/3, gps.height/3);
+    }
+
+    car.onload = function()
+    {
+      ctx.drawImage(car, canvas.width/2, canvas.height/2, car.width/2.7, car.height/2.7);
+    }
+
+    function checkClick (evt) {
+      var xy = getMousePos(canvas, evt);
+      if((canvas.width/8 <= xy.x && xy.x <= canvas.width/8 + gps.width/3) &&
+         (canvas.height/1.8 <= xy.y && xy.y <= canvas.height/1.8 + gps.height/3))
+      {
+        crimeChoice = "a";
+        alert("it's fine, we all get curious.");
+      }
+      else if((canvas.width/1.6 <= xy.x && xy.x <= canvas.width/1.6 + cat.width/2.3) &&
+              (0 <= xy.y && xy.y <= cat.height/2.3))
+      {
+        crimeChoice = "b";
+        alert("it'd be much worse if the cat wasn't half-dead.");
+      }
+      else if((canvas.width/2 <= xy.x && xy.x <= canvas.width/2 + car.width/2.7) &&
+              (canvas.height/2 <= xy.y && xy.y <= canvas.height/2 + car.height/2.7))
+      {
+        crimeChoice = "c";
+        alert("roads? Where we're going, we don't need roads.");
+      }
+
+      if(crimeChoice == "a" || crimeChoice == "b" || crimeChoice == "c")
+      {
+        canvas.removeEventListener("click", checkClick);
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        if(crimeChoice == "a")
+        {
+          // Load A stages
+        }
+        else if (crimeChoice == "b")
+        {
+          // Load B stages
+        }
+        else
+        {
+          // Load C stages
+        }
+      }
+    }
+
+    canvas.addEventListener("click", checkClick);
+  }
+
+  function loadChar()
+  {
+    var char = new Image();
+    var pos = new Image();
+    var neg = new Image();
+    char.onload = function()
+    {
+      ctx.drawImage(char,0, 0,char.width,   char.height,
+                        0, 0,canvas.width,canvas.height);
+      pos.src = "https://raw.githubusercontent.com/Bae18H/HackCMU/master/Images/postive%20criminal%20particle.png";
+      neg.src = "https://raw.githubusercontent.com/Bae18H/HackCMU/master/Images/negative%20criminal%20particle.png";
+    }
+    char.src = "https://raw.githubusercontent.com/Bae18H/HackCMU/master/Images/tag%20urself.png";
+
+    pos.onload = function()
+    {
+      ctx.drawImage(pos, canvas.width/8, canvas.height/3, pos.width/4, pos.height/4);
+    }
+
+    neg.onload = function()
+    {
+      ctx.drawImage(neg, 5.5*canvas.width/8, canvas.height/3, neg.width/4, neg.height/4.2);
+    }
+
+    function checkClick (evt) {
+      var xy = getMousePos(canvas, evt);
+      if((canvas.width/8 <= xy.x && xy.x <= canvas.width/8 + pos.width/4) &&
+        (canvas.height/3 <= xy.y && xy.y <= canvas.height/3 + pos.height/4))
+      {
+        playerChoice = "p";
+        alert("you positively are the worst.");
+      }
+      else if((5.5*canvas.width/8 <= xy.x && xy.x <= 5.5* canvas.width/8 + neg.width/4) &&
+        (canvas.height/3 <= xy.y && xy.y <= canvas.height/3 + neg.height/4.2))
+      {
+        playerChoice = "n";
+        alert("you make everything negative.");
+      }
+
+      if(playerChoice == "p" || playerChoice == "n")
+      {
+        canvas.removeEventListener("click", checkClick);
+        ctx.clearRect(0,0,canvas.width, canvas.height);
+        loadCrime();
+      }
+    }
+
+    canvas.addEventListener("click", checkClick);
+  }
+
   function loadMain()
   {
     var main = new Image();
@@ -28,21 +163,21 @@
     {
       ctx.drawImage(main,0,0,main.width,   main.height,
                         0,0,canvas.width,canvas.height);
-      window.addEventListener("keypress", (e) => {
-        if(e.key == "Enter")
-        {
-          ctx.clearRect(0,0,canvas.width, canvas.height);
-          // Change to menu screen
-        }
-      });
     }
-    main.src = "https://raw.githubusercontent.com/Bae18H/HackCMU/master/main%20screen.png";
+    main.src = "https://raw.githubusercontent.com/Bae18H/HackCMU/master/Images/main%20screen.png";
+
+    window.addEventListener("keypress", (evt) => {
+      if(evt.key == "Enter")
+      {
+        ctx.clearRect(0,0,canvas.width, canvas.height);
+        loadChar();
+      }
+    });
   }
 
   loadMain();
 
 </script>
-
 
 </body>
 </html>
