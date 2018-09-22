@@ -34,7 +34,7 @@ function Bfield(x, y){
 	for(var i = 0; i < charges.length; i++){
 		var Bi = charges[i].Bfield(x, y);
 
-		B += Bi; 
+		B += Bi;
 	}
 	return B;
 }
@@ -47,10 +47,10 @@ function Player (xi, yi, q){
 	this.r = cwidth/50;
 	this.img = new Image();
 	if(q > 0){
-		this.img.src = "https://raw.githubusercontent.com/Bae18H/HackCMU/master/Images/postive%20criminal%20particle.png" 
+		this.img.src = "https://raw.githubusercontent.com/Bae18H/HackCMU/master/Images/postive%20criminal%20particle.png"
 	} else {
 
-		this.img.src = "https://raw.githubusercontent.com/Bae18H/HackCMU/master/Images/negative%20criminal%20particle.png" 
+		this.img.src = "https://raw.githubusercontent.com/Bae18H/HackCMU/master/Images/negative%20criminal%20particle.png"
 	}
 }
 
@@ -100,8 +100,9 @@ Goal.prototype.draw = function(ctx, mx, my){
 
 Goal.prototype.update = function(x, y){
 	if(x > this.x && x < this.x + this.width && y > this.y && y < this.y + this.height){
-		console.log("You Win!!!");
+		return true;
 	}
+	return false;
 }
 
 Goal.prototype.click = function(mx, my){
@@ -273,8 +274,8 @@ VCapacitor.prototype.click = function(mx, my){
 		this.clicked = false;
 		return true;
 	} else if(this.moveable){
-		if(((my > this.y && my < this.y + this.dwidth) || 
-			(my > this.y + this.d && my < this.y + this.d + this.dwidth)) 
+		if(((my > this.y && my < this.y + this.dwidth) ||
+			(my > this.y + this.d && my < this.y + this.d + this.dwidth))
 			&& mx > this.x-this.width/2 && mx < this.x+this.width/2){
 			this.clicked = true;
 			return true;

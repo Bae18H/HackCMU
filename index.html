@@ -7,6 +7,7 @@
   <script type="text/javascript" src="./Astages.js"> </script>
   <script type="text/javascript" src="./Bstages.js"> </script>
   <script type="text/javascript" src="./Cstages.js"> </script>
+  <script type="text/javascript" src="./test.js"> </script>
 </head>
 
 <body>
@@ -29,7 +30,9 @@
   var mouseY = 0;
 
   var p;
+  var goal;
 
+  var requestID;
 
   // Misc helper
   function getMousePos(canvas, evt) {
@@ -40,19 +43,52 @@
       };
   }
 
-  var loop = function(){
-  	ctx.clearRect(0, 0, cwidth, cheight);
-  	draw(ctx, mouseX, mouseY);
+  function loop(nextLevel) {
+    requestID = window.requestAnimationFrame(loop);
+    if(!goal.update(p.x, p.y))
+    {
+      ctx.clearRect(0, 0, cwidth, cheight);
+    	draw(ctx, mouseX, mouseY);
 
-  	p.update();
-  	p.draw(ctx);
+    	p.update();
+    	p.draw(ctx);
 
-  	ctx.font="20px Georgia";
-  	ctx.fillStyle="#000000";
-  	ctx.fillText("E: " + Efield(mouseX, mouseY).toString(), cwidth/10, cheight/10);
-  	window.requestAnimationFrame(loop);
+      goal.draw(ctx, mouseX, mouseY);
+      goal.update(p.x, p.y);
+    }
+    else {
+      window.cancelAnimationFrame(requestID);
+      canvas.removeEventListener("keydown", restart);
+      requestID = null;
+      stageEnd();
+      console.log(typeof(nextLevel));
+      console.log(nextLevel);
+      canvas.addEventListener("keydown", function(evt){
+        if(evt.key == "Enter"){
+          nextLevel();
+        }
+      });
+    }
   }
 
+  function restart(evt){
+    if(evt.key == "Enter"){
+      requestID = undefined;
+      p = new Player(cwidth/3, cheight/3);
+      window.requestAnimationFrame(loop(secA));
+    }
+  }
+
+  var stageEnd = function()
+  {
+    ctx.clearRect(0, 0, cwidth, cheight);
+    ctx.font="72px Georgia";
+    ctx.fillStyle="#000000";
+    ctx.fillText("A WINNER IS YOU!", cwidth/4, cheight/2);
+    ctx.font="20px Georgia";
+    ctx.fillStyle="#000000";
+    ctx.fillText("[ENTER] to continue...", 5.8*cwidth/10, cheight/2 + 40);
+  }
 
 
 
