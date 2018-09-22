@@ -21,10 +21,6 @@ var loop = function(){
 	goal.update(p.x, p.y);
 	goal.draw(ctx, mouseX, mouseY);
 
-	ctx.font="20px Georgia";
-	ctx.fillStyle="#000000";
-	ctx.fillText("E: " + Efield(mouseX, mouseY).toString(), cwidth/10, cheight/10);
-	ctx.fillText("B: " + Bfield(mouseX, mouseY).toString(), cwidth/10, 2*cheight/10);
 	window.requestAnimationFrame(loop);
 }
 
@@ -46,7 +42,7 @@ var init = function(){
 
 	canvas.addEventListener("keydown", function(evt){
 		if(evt.key == "Enter"){
-			p = new Player(level[0][0], level[0][1]);
+			p = new Player(level[0][0], level[0][1], 1);
 		}
 	});
 
@@ -57,7 +53,7 @@ var init = function(){
 
 	level = test(cwidth, cheight);
 
-	p = new Player(level[0][0], level[0][1]);
+	p = new Player(level[0][0], level[0][1], 1);
 	goal = new Goal(level[1][0], level[1][1], true);
 
 	charges = level[2]
