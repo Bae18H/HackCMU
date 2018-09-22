@@ -30,7 +30,7 @@ function Efield(x, y){
 }
 
 function Bfield(x, y){
-	var B = [0, 0]
+	var B = 0
 	for(var i = 0; i < charges.length; i++){
 		var Bi = charges[i].Bfield(x, y);
 
@@ -55,10 +55,58 @@ Player.prototype.draw = function(ctx){
 
 Player.prototype.update = function(){
 	Enet = Efield(this.x, this.y);
-	this.vx += Enet[0];
-	this.vy += Enet[1];
+	Bnet = Bfield(this.x, this.y);
+	Fnet = [0,0];
+
+	Fnet[0] = Enet[0] + this.vy*Bnet;
+	Fnet[1] = Enet[1] - this.vx*Bnet;
+
+	this.vx += Fnet[0];
+	this.vy += Fnet[1];
 	this.x += this.vx;
 	this.y += this.vy;
+
+}
+
+function Goal(x, y, moveable = false){
+	this.x = x;
+	this.y = y;
+	this.moveable = moveable;
+	this.clicked = false;
+	this.width = cwidth/20;
+	this.height = cheight/10;
+}
+
+Goal.prototype.draw = function(ctx, mx, my){
+	dx = 0;
+	dy = 0;
+	if(this.clicked){
+		dx = mx;
+		dy = my;
+	} else {
+		dx = this.x;
+		dy = this.y;
+	}
+	ctx.fillStyle = "#00FF00";
+	ctx.fillRect(dx, dy, this.width, this.height);
+}
+
+Goal.prototype.update = function(x, y){
+	if(x > this.x && x < this.x + this.width && y > this.y && y < this.y + this.height){
+		console.log("You Win!!!");
+	}
+}
+
+Goal.prototype.click = function(mx, my){
+	if(this.clicked){
+		this.x = mx;
+		this.y = my;
+		this.clicked = false;
+	} else if(this.moveable){
+		if(mx > this.x && mx < this.x + this.width && my > this.y && my < this.y + this.height){
+			this.clicked = true;
+		}
+	}
 }
 
 
@@ -99,7 +147,7 @@ PointCharge.prototype.Efield = function(x, y){
 }
 
 PointCharge.prototype.Bfield = function(x, y){
-	return [0, 0];
+	return 0;
 }
 
 PointCharge.prototype.draw = function(ctx, mx, my){
@@ -164,7 +212,7 @@ HCapacitor.prototype.Efield = function(x, y) {
 	}
 }
 HCapacitor.prototype.Bfield = function() {
-  return [0, 0];
+  return 0;
 }
 HCapacitor.prototype.draw = function(ctx, mx, my) {
 	var dx;
@@ -234,7 +282,7 @@ VCapacitor.prototype.Efield = function(x, y) {
 	}
 }
 VCapacitor.prototype.Bfield = function() {
-  return [0, 0];
+  return 0;
 }
 VCapacitor.prototype.draw = function(ctx, mx, my) {
 	var dx;
@@ -265,20 +313,57 @@ VCapacitor.prototype.update = function() {
 
 }
 
-function MagField (x, y, B) {
+function MagField (x, y, r, B, moveable=false, clicked=false) {
     this.x = x;
     this.y = y;
+	this.r = r;
     this.B = B;
+	this.moveable = moveable;
+	this.clicked=clicked;
 }
-MagField.prototype.Efield = function() {
+MagField.prototype.Efield = function(x, y) {
 	return [0, 0];
 }
-MagField.prototype.Bfield = function() {
-	return B;
+MagField.prototype.Bfield = function(x, y) {
+	if(Math.pow(this.x - x, 2) + Math.pow(this.y-y, 2) < Math.pow(this.r, 2)){
+		return this.B;
+	} else {
+		return 0;
+	}
 }
-MagField.prototype.draw = function() {
+MagField.prototype.draw = function(ctx, mx, my) {
+	var dx;
+	var dy;
+	if(this.clicked){
+		dx = mx;
+		dy = my;
+	} else {
+		dx = this.x;
+		dy = this.y;
+	}
+
+	var grad = ctx.createRadialGradient(dx, dy, this.r/2.5, dx, dy, this.r);
+	grad.addColorStop(0, "#00FF00FF");
+	grad.addColorStop(1, "#00FF0011");
+	ctx.fillStyle=grad;
+	ctx.beginPath();
+	ctx.arc(dx, dy, this.r, 0, 2*Math.PI);
+	ctx.fill();
 
 }
-MagField.prototype.update = function() {
+MagField.prototype.click = function(mx, my){
+	if(this.clicked){
+		this.x = mx;
+		this.y = my;
+		this.clicked = false;
+		return true;
+	} else if(this.moveable){
+		if((Math.pow(this.x-mx, 2)+Math.pow(this.y-my,2)) < Math.pow(this.r, 2)){
+			this.clicked = true;
+			return true;
+		}
+		return false;
+	}
+	return false;
 
 }

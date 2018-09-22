@@ -4,7 +4,11 @@ var ctx;
 var mouseX = 0;
 var mouseY = 0;
 
+var level = []
+
 var p;
+
+var goal;
 
 var loop = function(){
 	ctx.clearRect(0, 0, cwidth, cheight);
@@ -13,9 +17,14 @@ var loop = function(){
 	p.update();
 	p.draw(ctx);
 
+
+	goal.update(p.x, p.y);
+	goal.draw(ctx, mouseX, mouseY);
+
 	ctx.font="20px Georgia";
 	ctx.fillStyle="#000000";
 	ctx.fillText("E: " + Efield(mouseX, mouseY).toString(), cwidth/10, cheight/10);
+	ctx.fillText("B: " + Bfield(mouseX, mouseY).toString(), cwidth/10, 2*cheight/10);
 	window.requestAnimationFrame(loop);
 }
 
@@ -37,19 +46,21 @@ var init = function(){
 
 	canvas.addEventListener("keydown", function(evt){
 		if(evt.key == "Enter"){
-			p = new Player(cwidth/3, cheight/2);
+			p = new Player(level[0][0], level[0][1]);
 		}
 	});
 
 	canvas.addEventListener("click", function(evt){
 		clickCharges(evt.clientX, evt.clientY);
+		goal.click(evt.clientX, evt.clientY);
 	});
 
-	charges.push(new HCapacitor(cwidth/10, cheight/2, -100, cwidth/2, cheight/2, true));
-	charges.push(new VCapacitor(3*cwidth/4, cheight/10, 100, cheight/1.5, cwidth/5, true));
-	charges.push(new PointCharge(cwidth/2, cheight/2, 1, true));
-	charges.push(new PointCharge(cwidth/2, 4*cheight/5, -1, true));
-	p = new Player(cwidth/3, cheight/2);
+	level = test(cwidth, cheight);
+
+	p = new Player(level[0][0], level[0][1]);
+	goal = new Goal(level[1][0], level[1][1], true);
+
+	charges = level[2]
 
 window.requestAnimationFrame(loop);
 }
