@@ -4,8 +4,8 @@ var secA = function()
   ctx.clearRect(0, 0, cwidth, cheight);
 }
 
-var Aloop = function(){
-  loop(secA);
+function Aloop(){
+  loop(Aloop, secA);
 }
 function initA()
 {
